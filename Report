@@ -1,0 +1,204 @@
+API Penetration Testing Report
+Executive Summary
+Item	Details
+Project Name	                     University Vuln
+Assessment Type	                   API Penetration Testing
+Tester	                           Gehad Reda Adel
+Assessment Date	                   March 2026
+Methodology	                       OWASP API Security Top 10
+Testing Approach	                 Black Box Assessment
+
+
+Overview:
+An API security assessment was conducted against the University Vuln application to identify security weaknesses affecting confidentiality, integrity, and availability.
+The assessment focused on authentication mechanisms, authorization controls, object-level access control, input handling, rate-limiting implementation, and exposure of sensitive information.
+Multiple vulnerabilities were identified, including Broken Object Level Authorization (BOLA), Insecure Direct Object Reference (IDOR), Mass Assignment, Sensitive Data Exposure, and Missing Rate Limiting Controls.
+
+Scope
+The assessment covered exposed API endpoints associated with:
+Student Records
+Grades Management
+Authentication
+Fee Services
+Methodology
+
+The assessment followed a structured penetration testing methodology:
+
+Reconnaissance
+Technology fingerprinting
+API endpoint discovery
+Request analysis
+
+Enumeration
+Endpoint enumeration
+Parameter discovery
+Authorization testing
+
+Exploitation
+Access control validation
+Object reference manipulation
+Privilege escalation testing
+
+Verification
+Impact validation
+Risk assessment
+Remediation recommendations
+
+Tools Used
+Tool	               Purpose
+Burp Suite	         Intercepting and manipulating API requests
+FFUF	               Endpoint discovery and fuzzing
+SQLMap	             SQL injection validation
+cURL	               Manual API interaction
+Hashcat	             Hash analysis
+WhatWeb	             Technology fingerprinting
+BuiltWith	           Technology stack identification
+
+Risk Summary
+Vulnerability	                       Severity
+BOLA	                               Critical
+IDOR	                               High
+Mass Assignment	                     Critical
+Data Exposure	                       High
+Missing Rate Limiting	               Medium
+
+
+Finding 1: Broken Object Level Authorization (BOLA)
+Severity: Critical
+
+Endpoint
+/grads
+
+Description:
+The API failed to validate ownership and authorization checks when accessing grade-related resources.
+An authenticated user was able to access objects belonging to other users by modifying object identifiers.
+
+Impact:
+An attacker may:
+Access grades of other students
+Retrieve academic information
+Violate student privacy
+Enumerate records
+OWASP Mapping
+
+OWASP API1:2023 Broken Object Level Authorization
+
+Recommendation
+Enforce authorization checks on every object request
+Validate ownership server-side
+Implement role-based access controls
+
+Finding 2: Insecure Direct Object Reference (IDOR)
+Severity: High
+
+Endpoint
+/students
+Description:
+The application exposed direct references to student resources without sufficient authorization validation.
+Manipulating identifiers allowed unauthorized access to records belonging to other users.
+
+Impact
+
+Potential exposure of:
+Student information
+Academic records
+Personal identifiers
+
+Recommendation:
+Replace predictable identifiers
+Enforce object-level authorization
+Use indirect references where applicable
+
+Finding 3: Mass Assignment
+Severity: Critical
+
+Endpoint
+/login
+Modified Parameter
+{
+  "isAdmin": true
+}
+Description:
+The API accepted user-supplied parameters without properly restricting assignable attributes.
+The tester was able to submit administrative fields not intended for user control.
+
+Impact:
+
+Potential consequences include:
+Privilege escalation
+Unauthorized administrative access
+Full application compromise
+OWASP Mapping
+
+OWASP API6:2023 Unrestricted Access to Sensitive Business Flows
+
+Recommendation
+Use allowlists for accepted parameters
+Reject unexpected attributes
+Implement server-side role enforcement
+
+Finding 4: Sensitive Data Exposure
+Severity: High
+
+Description:
+The API disclosed sensitive information through responses.
+Exposed Data
+Student IDs
+Password hashes
+
+Impact:
+Exposure of password hashes may facilitate:
+Offline cracking attempts
+Credential attacks
+User enumeration
+
+Recommendation:
+Remove sensitive information from API responses
+Minimize exposed fields
+Implement data classification policies
+
+Finding 5: Missing Rate Limiting
+Severity: Medium
+
+Endpoint
+/fee
+Requests Sent
+70 Requests
+Description:
+The endpoint did not enforce sufficient rate limiting controls.
+Multiple requests were processed without restrictions.
+
+Impact
+
+Potential abuse includes:
+
+Brute-force attacks
+Resource exhaustion
+API abuse
+Automated scraping
+
+Recommendation:
+Implement rate limiting
+Introduce throttling mechanisms
+Monitor excessive requests
+Apply account/IP-based restrictions
+
+Risk Matrix
+Likelihood      	Impact	      Rating
+High	            Critical	    Critical
+High	              High	       High
+Medium	            High	       High
+Medium	           Medium	      Medium
+
+Conclusion:
+The assessment identified multiple authorization and access control weaknesses affecting the API.
+The most critical issues involve Broken Object Level Authorization and Mass Assignment vulnerabilities, both of which may allow unauthorized access to sensitive information and privilege escalation.
+Immediate remediation should prioritize:
+
+Authorization Enforcement
+Object-Level Access Control
+Parameter Validation
+Sensitive Data Protection
+Rate Limiting Controls
+
+Addressing these findings will significantly improve the security posture of the University Vuln application and reduce the risk of unauthorized access, data exposure, and privilege escalation.
